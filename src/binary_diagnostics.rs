@@ -50,11 +50,10 @@ pub fn diagnostic(diagnostic_report: &[u32] , size: usize) -> Report {
         epsilon : epsilon }
 }
 
-fn get_common_value(diagnostic_report: &[u32], position: usize) -> i32{
+fn get_common_value(diagnostic_report: &[u32], position: usize) -> i32 {
     let mut acc = 0;
     for number in diagnostic_report {
-        let bit = (number >> position) & 1;
-        if bit == 1 {
+        if is_bit_set(*number, position) {
             acc += 1;
         }
         else {
@@ -65,45 +64,48 @@ fn get_common_value(diagnostic_report: &[u32], position: usize) -> i32{
 }
 
 pub fn oxygen_generator_rating(diagnostic_report: &[u32], size: usize) -> u32 {
-    let mut position = 0;
+    let mut position = size - 1;
     let mut list = diagnostic_report.clone().to_vec();
     while list.len() > 1 {
-        let accumulated = get_common_value(diagnostic_report, position);
+        let accumulated = get_common_value(list.clone().as_ref(), position);
         if  accumulated < 0 { //if 1 is more common
-            list = list.into_iter().filter(|val| (val >> position) & 1 == 0 ).collect();
+            list = list.into_iter().filter(|val| !is_bit_set(*val, position) ).collect();
         }
         else if accumulated > 0 {
-            list = list.into_iter().filter(|val| (val >> position) & 1 == 0 ).collect();
+            list = list.into_iter().filter(|val| is_bit_set(*val, position) ).collect();
         } else {
-            list = list.into_iter().filter(|val| (val >> position) & 1 == 1 ).collect();
+            list = list.into_iter().filter(|val| is_bit_set(*val, position) ).collect();
         }
-        position += 1;
+        if list.len() == 1 {
+            return list[0];
+        }
+        position -= 1;
     }
     return list[0];
 }
 
+fn is_bit_set(number: u32, position : usize) -> bool {
+    (number & (1 << position)) != 0
+}
+
 pub fn co2_scrubber_rating(diagnostic_report: &[u32], size: usize) -> u32 {
-    let mut position = 0;
+    let mut position = size - 1;
     let mut list = diagnostic_report.clone().to_vec();
     while list.len() > 1 {
 
-        let accumulated = get_common_value(diagnostic_report, position);
-
-        dbg!(accumulated);
-        let test_list : Vec<bool> = list.clone().into_iter().map(|val| ((val >> position) & 1) > 1 ).collect();
-        dbg!(list.clone());
-        dbg!(test_list);
-
-        if accumulated < 0 { //if 1 is more common
-            list = list.into_iter().filter(|val| (*val >> position) & 1 == 0 ).collect();
+        let accumulated = get_common_value(list.clone().as_ref(), position);
+        if accumulated < 0 { //1 is least common
+            list = list.into_iter().filter(|val| is_bit_set(*val, position) ).collect();
         }
-        else if accumulated > 0 { // Zero more common
-            list = list.into_iter().filter(|val| ((*val >> position) & 1) == 1 ).collect();
+        else if accumulated > 0 { // 0 least common
+            list = list.into_iter().filter(|val| !is_bit_set(*val, position) ).collect();
         } else {
-            list = list.into_iter().filter(|val| (*val >> position) & 1 == 0 ).collect();
+            list = list.into_iter().filter(|val| !is_bit_set(*val, position) ).collect();
         }
-        position += 1;
-
+        if list.len() == 1 {
+            return list[0];
+        }
+        position -= 1;
     }
     return list[0];
 }
@@ -122,9 +124,21 @@ fn diagnostic_test() {
     let report = diagnostic(example_data.as_ref(), 5);
     assert_eq!(report.gamma, 22);
     assert_eq!(report.epsilon, 9);
-    assert_eq!(report.oxygen, 23);
     assert_eq!(report.co2_scrubber, 10);
+    assert_eq!(report.oxygen, 23);
+}
 
+#[test]
+fn is_bit_set_test() {
+    assert_eq!(is_bit_set(1, 0), true);
+    assert_eq!(is_bit_set(0b01010, 0), false);
+    assert_eq!(is_bit_set(0b01010, 1), true);
+    assert_eq!(is_bit_set(0b01010, 2), false);
+}
 
-
+#[test]
+fn get_common_value_test() {
+    let example_data = vec![0b00100, 0b11110, 0b10110, 0b10111, 0b10101, 0b01111, 0b00111, 0b11100, 0b10000, 0b11001, 0b00010, 0b01010];
+    let acc = get_common_value(&example_data, 4);
+    assert_eq!(acc, 2);
 }
