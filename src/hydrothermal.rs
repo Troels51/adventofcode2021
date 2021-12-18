@@ -15,9 +15,6 @@ impl Line {
     pub fn normalize(&self) -> Point {
         (self.end - self.start).normalize()
     }
-    fn norm(&self) -> f64 {
-        (self.end - self.start).norm()
-    }
     pub fn is_horizontal(&self) -> bool {
         self.start.y == self.end.y
     }
@@ -45,9 +42,6 @@ pub struct Point {
 impl Point {
     fn normalize(&self) -> Point {
         Point{x: i32::signum(self.x), y: i32::signum(self.y)}
-    }
-    fn norm(&self) -> f64 {
-        f64::sqrt( ((self.x).pow(2) + (self.y).pow(2)) as f64)
     }
 }
 impl Add for Point {

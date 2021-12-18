@@ -41,7 +41,7 @@ pub struct Report {
     pub epsilon : u32,
 }
 pub fn diagnostic(diagnostic_report: &[u32] , size: usize) -> Report {
-    let mut accumulator = accumulated_array(diagnostic_report, size);
+    let accumulator: [i32; 32] = accumulated_array(diagnostic_report, size);
     let oxygen = oxygen_generator_rating(diagnostic_report, size);
     let co2 = co2_scrubber_rating(diagnostic_report, size);
     let gamma = accumulator_to_uint(&accumulator, size);

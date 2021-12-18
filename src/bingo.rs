@@ -1,4 +1,5 @@
-use crate::{bingo, day4_data};
+use crate::bingo;
+use crate::day4_data;
 
 #[derive(Clone, Copy, Debug)]
 pub struct Board { 
@@ -19,12 +20,12 @@ impl Board {
     }
     pub fn score(&self, number_that_was_called: u32) -> u32{
         let d : [ [(u32,bool);5]; 5] = self.rows.zip(self.checks).map(|(a,b)| a.zip(b));
-        let sum : u32 = d.into_iter().flatten().filter_map(|(cell, mark)| (!mark).then(||cell)).sum();
+        let sum : u32 = d.iter().flatten().filter_map(|(cell, mark)| (!mark).then(||cell)).sum();
         sum * number_that_was_called
     }
 
     pub fn mark(&mut self, number: u32) {
-        match self.rows.into_iter().flatten().position(|&test| test == number) {
+        match self.rows.iter().flatten().position(|&test| test == number) {
             Some(position) => {
                 self.checks[position / 5][position % 5 ] = true;
             }
@@ -152,10 +153,10 @@ fn score_test() {
         ]);
     example.mark(1);
     assert_eq!(example.checks[4][0], true);
-    assert_eq!(example.score(1), example.rows.into_iter().flatten().sum::<u32>() - 1); //Sum everything except 1
+    assert_eq!(example.score(1), example.rows.iter().flatten().sum::<u32>() - 1); //Sum everything except 1
     example.mark(2);
     assert_eq!(example.checks[1][1], true);
-    assert_eq!(example.score(2), 2* (example.rows.into_iter().flatten().sum::<u32>() - 3)); //Sum everything except 1,2 and multiply by 2
+    assert_eq!(example.score(2), 2* (example.rows.iter().flatten().sum::<u32>() - 3)); //Sum everything except 1,2 and multiply by 2
 }
 #[test]
 fn winning_row_test() {
