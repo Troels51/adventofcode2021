@@ -14,7 +14,7 @@ fn times_it_increased( floor_height : Vec<i32>) -> i32 {
     count
 }
 fn sliding_window(floor_height : Vec<i32>) -> Vec<i32> {
-    floor_height.into_boxed_slice().windows(3).map(|window| window.into_iter().sum()).collect()
+    floor_height.windows(3).map( |window| window.into_iter().sum() ).collect()
 }
 #[test]
 fn sliding_window_test() {

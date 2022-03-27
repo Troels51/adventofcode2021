@@ -7,15 +7,15 @@ use serde::{de::Error, Deserialize, Deserializer}; // 1.0.94
 
 use bmp::{Image, Pixel};
 
-use crate::{day2::{Submarine, Command}, binary_diagnostics::diagnostic};
+use crate::{day2::{Submarine, Command}, day3::diagnostic};
 use itertools::iterate;
 mod day1;
 pub mod day2;
-pub mod binary_diagnostics;
-pub mod bingo;
+pub mod day3;
+pub mod day4;
 
 pub mod day4_data;
-pub mod hydrothermal;
+pub mod day5;
 pub mod day5_data;
 
 fn lantern_fish_day(fish: &Vec<u64>) -> Vec<u64> {
