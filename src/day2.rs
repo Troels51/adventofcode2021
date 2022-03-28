@@ -1,6 +1,5 @@
 use std::fs::File;
 
-use serde::{Deserialize};
 
 pub struct Submarine {
     pub aim : i32,
@@ -40,27 +39,27 @@ impl Submarine {
         self.aim -= x; //If we go up we decrease depth
     }
 
-    pub fn take_cmd(&mut self, command : Command) {
+    pub fn take_cmd(&mut self, command : &Command) {
         match command {
-            Command::Forward(input) => self.forward(input),
-            Command::Up(input) => self.up(input), 
-            Command::Down(input) => self.down(input), 
+            Command::Forward(input) => self.forward(*input),
+            Command::Up(input) => self.up(*input), 
+            Command::Down(input) => self.down(*input), 
         }
     }
     pub fn take_cmd_list(&mut self, cmds: &[Command]){ 
-        cmds.into_iter().for_each(|cmd| self.take_cmd(cmd.to_owned()));
+        cmds.into_iter().for_each(|cmd| self.take_cmd(cmd));
     }
 }
 
 #[test]
 fn cmd_test() {
     let mut sub : Submarine = Submarine::default();
-    sub.take_cmd(Command::Forward(5));
-    sub.take_cmd(Command::Down(5));
-    sub.take_cmd(Command::Forward(8));
-    sub.take_cmd(Command::Up(3));
-    sub.take_cmd(Command::Down(8));
-    sub.take_cmd(Command::Forward(2));
+    sub.take_cmd(&Command::Forward(5));
+    sub.take_cmd(&Command::Down(5));
+    sub.take_cmd(&Command::Forward(8));
+    sub.take_cmd(&Command::Up(3));
+    sub.take_cmd(&Command::Down(8));
+    sub.take_cmd(&Command::Forward(2));
     assert_eq!(sub.depth, 60);
     assert_eq!(sub.horizontal_position, 15);
 }
